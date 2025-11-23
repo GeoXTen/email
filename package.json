@@ -1,0 +1,13 @@
+{
+  "name": "email-dot-generator",
+  "version": "1.0.0",
+  "description": "A web application that generates all possible email variations with dots",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'No build required'"
+  },
+  "keywords": ["email", "generator", "dots", "gmail"],
+  "author": "",
+  "license": "MIT"
+}

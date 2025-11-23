@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Dot Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #16213e;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid #2d3561;
+        }
+
+        h1 {
+            color: #e94560;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a0a0c0;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            color: #e0e0f0;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            background: #0f3460;
+            border: 2px solid #2d3561;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #e0e0f0;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]::placeholder {
+            color: #6a6a8a;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .hint {
+            color: #8a8aa0;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(233, 69, 96, 0.4);
+            background: #d63851;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .results-header h2 {
+            color: #e0e0f0;
+            font-size: 1.5em;
+        }
+
+        .count {
+            background: #e94560;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .results-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #2d3561;
+            border-radius: 10px;
+            padding: 15px;
+            background: #0f3460;
+        }
+
+        .email-item {
+            background: #1a1a2e;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+            border: 1px solid #2d3561;
+        }
+
+        .email-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3);
+            border-color: #e94560;
+        }
+
+        .email-item:first-child {
+            background: #1e3a5f;
+            border: 2px solid #e94560;
+        }
+
+        .email-item:first-child .email-text::before {
+            content: '⭐ ';
+        }
+
+        .email-text {
+            font-family: 'Courier New', monospace;
+            color: #e0e0f0;
+            font-size: 25px;
+            word-break: break-all;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: background 0.3s;
+            white-space: nowrap;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: #d63851;
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #8a8aa0;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            background: #3d1f1f;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e94560;
+        }
+
+        /* Scrollbar styling */
+        .results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .results-container::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border-radius: 10px;
+        }
+
+        .results-container::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 10px;
+        }
+
+        .results-container::-webkit-scrollbar-thumb:hover {
+            background: #d63851;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Generator</h1>
+        <p class="subtitle">Generate all possible email variations with dots (numbers excluded)</p>
+
+        <div class="input-section">
+            <label for="emailInput">Enter your email address:</label>
+            <input 
+                type="text" 
+                id="emailInput" 
+                placeholder="example: john123smith@gmail.com"
+                autocomplete="off"
+            >
+            <p class="hint">Dots will be inserted between letters only, not around numbers</p>
+        </div>
+
+        <button onclick="generateEmails()">Generate Email</button>
+
+        <div id="errorContainer" class="hidden"></div>
+
+        <div id="resultsSection" class="results-section hidden">
+            <div class="results-header">
+                <h2>Generated Emails</h2>
+                <span id="emailCount" class="count">0 variations</span>
+            </div>
+            <div id="resultsContainer" class="results-container">
+                <div class="no-results">No results yet. Enter an email and click generate!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateEmails() {
+            const emailInput = document.getElementById('emailInput').value.trim();
+            const errorContainer = document.getElementById('errorContainer');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const emailCount = document.getElementById('emailCount');
+
+            // Clear previous errors
+            errorContainer.innerHTML = '';
+            errorContainer.classList.add('hidden');
+
+            // Validate email
+            if (!emailInput) {
+                showError('Please enter an email address');
+                return;
+            }
+
+            if (!emailInput.includes('@')) {
+                showError('Please enter a valid email address with @');
+                return;
+            }
+
+            const [localPart, domain] = emailInput.split('@');
+            
+            if (!localPart || !domain) {
+                showError('Invalid email format');
+                return;
+            }
+
+            // Generate all combinations
+            const variations = generateDotVariations(localPart);
+            
+            if (variations.length === 0) {
+                showError('No valid positions found to insert dots');
+                return;
+            }
+
+            // Display results
+            displayResults(variations, domain);
+        }
+
+        function generateDotVariations(localPart) {
+            // Find ALL positions where we can insert dots
+            // Allow dots between any characters (letters, numbers, etc.)
+            // Only restrictions:
+            // - Not at the beginning or end
+            // - Not where a dot already exists (no consecutive dots)
+            
+            const positions = [];
+            
+            for (let i = 0; i < localPart.length - 1; i++) {
+                const currentChar = localPart[i];
+                const nextChar = localPart[i + 1];
+                
+                const currentIsDot = currentChar === '.';
+                const nextIsDot = nextChar === '.';
+                
+                // Can insert dot between any characters except where dots already exist
+                if (!currentIsDot && !nextIsDot) {
+                    positions.push(i + 1);
+                }
+            }
+
+            if (positions.length === 0) {
+                return [localPart];
+            }
+
+            // Generate all combinations using binary representation
+            const variations = new Set();
+            const totalCombinations = Math.pow(2, positions.length);
+            
+            // Limit to prevent browser freeze for very long emails
+            const maxCombinations = Math.min(totalCombinations, 10000);
+            
+            for (let i = 0; i < maxCombinations; i++) {
+                let result = '';
+                let posIndex = 0;
+                
+                for (let j = 0; j < localPart.length; j++) {
+                    result += localPart[j];
+                    
+                    // Check if current position is a valid dot position
+                    if (positions.includes(j + 1)) {
+                        // Check if we should insert a dot at this position in this combination
+                        if ((i & (1 << posIndex)) !== 0) {
+                            result += '.';
+                        }
+                        posIndex++;
+                    }
+                }
+                
+                variations.add(result);
+            }
+
+            // Convert to array and sort with original email first
+            const variationsArray = Array.from(variations);
+            
+            // Sort so that:
+            // 1. Original (no dots added) comes first
+            // 2. Then sort by number of dots (fewest to most)
+            // 3. Then alphabetically
+            variationsArray.sort((a, b) => {
+                const dotsA = (a.match(/\./g) || []).length;
+                const dotsB = (b.match(/\./g) || []).length;
+                
+                // Original email in localPart (count existing dots in original)
+                const originalDots = (localPart.match(/\./g) || []).length;
+                
+                // If one has original number of dots and other doesn't, original comes first
+                if (dotsA === originalDots && dotsB !== originalDots) return -1;
+                if (dotsA !== originalDots && dotsB === originalDots) return 1;
+                
+                // Then sort by number of dots
+                if (dotsA !== dotsB) return dotsA - dotsB;
+                
+                // Finally alphabetically
+                return a.localeCompare(b);
+            });
+            
+            return variationsArray;
+        }
+
+        function displayResults(variations, domain) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const emailCount = document.getElementById('emailCount');
+
+            resultsSection.classList.remove('hidden');
+            emailCount.textContent = `${variations.length} variation${variations.length !== 1 ? 's' : ''}`;
+
+            resultsContainer.innerHTML = '';
+
+            variations.forEach(variation => {
+                const fullEmail = `${variation}@${domain}`;
+                const emailItem = document.createElement('div');
+                emailItem.className = 'email-item';
+                
+                emailItem.innerHTML = `
+                    <span class="email-text">${fullEmail}</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, '${fullEmail}')">Copy</button>
+                `;
+                
+                resultsContainer.appendChild(emailItem);
+            });
+        }
+
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                button.textContent = 'Failed';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            errorContainer.classList.remove('hidden');
+        }
+
+        // Allow Enter key to generate
+        document.getElementById('emailInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateEmails();
+            }
+        });
+    </script>
+</body>
+</html>
